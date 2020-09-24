@@ -1,7 +1,9 @@
-package com.example.readnewapp;
+package com.example.readnewapp.common;
 
 import android.util.Log;
 import android.util.Xml;
+
+import com.example.readnewapp.model.News;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

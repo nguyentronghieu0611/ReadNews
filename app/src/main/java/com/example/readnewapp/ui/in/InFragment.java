@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,11 +21,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.readnewapp.DetailActivity;
-import com.example.readnewapp.News;
-import com.example.readnewapp.NewsAdapter;
+import com.example.readnewapp.config.NewsDatabase;
+import com.example.readnewapp.ui.DetailActivity;
+import com.example.readnewapp.model.News;
+import com.example.readnewapp.adapter.NewsAdapter;
 import com.example.readnewapp.R;
-import com.example.readnewapp.Utils;
+import com.example.readnewapp.common.Utils;
 import com.example.readnewapp.ui.home.HomeViewModel;
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ public class InFragment extends Fragment {
     private RequestQueue mRequestQueue;
     private ListView lvNews;
     private List<News> listNews = new ArrayList<>();
+    private NewsDatabase db;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class InFragment extends Fragment {
 //                textView.setText(s);
             }
         });
+        db = new NewsDatabase(getContext());
         mRequestQueue =  Volley.newRequestQueue(getContext());
         bindEvent();
         getData();
@@ -78,7 +80,7 @@ public class InFragment extends Fragment {
             public void onResponse(String response) {
                 response = Utils.fixEncoding(response);
                 Log.e(TAG, "StringRequest onResponse: " + response);
-                lvNews.setAdapter(new NewsAdapter(listNews = Utils.parseXml(response),getContext()));
+                lvNews.setAdapter(new NewsAdapter(listNews = Utils.parseXml(response),getContext(),db));
             }
         }, new Response.ErrorListener() {
             @Override

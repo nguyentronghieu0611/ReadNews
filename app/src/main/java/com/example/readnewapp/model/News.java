@@ -1,6 +1,7 @@
-package com.example.readnewapp;
+package com.example.readnewapp.model;
 
 public class News {
+    private Integer ID;
     private String PUB_DATE;
     private String DESCRIPTION;
     private String CHANNEL;
@@ -10,6 +11,13 @@ public class News {
     private String DETAILS;
     private String IMG;
 
+    public Integer getID() {
+        return ID;
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
     public String getPUB_DATE() {
         return PUB_DATE;
     }

@@ -1,4 +1,4 @@
-package com.example.readnewapp;
+package com.example.readnewapp.config;
 
 import android.content.Context;
 

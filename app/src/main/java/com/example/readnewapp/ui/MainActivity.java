@@ -1,15 +1,15 @@
-package com.example.readnewapp;
+package com.example.readnewapp.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Menu;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.readnewapp.R;
+import com.example.readnewapp.config.NewsDatabase;
+import com.example.readnewapp.config.VolleySingleton;
+import com.example.readnewapp.model.News;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
     private DrawerLayout drawerLayout;
+    private NewsDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +43,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.id.nav_home, R.id.nav_in, R.id.nav_out)
                 .setDrawerLayout(drawerLayout)
                 .build();
+        db = new NewsDatabase(this);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
-        RequestQueue mRequestQueue = Volley.newRequestQueue(this);
     }
 
     @Override
