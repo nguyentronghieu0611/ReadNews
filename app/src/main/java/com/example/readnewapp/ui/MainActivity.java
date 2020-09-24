@@ -1,6 +1,9 @@
 package com.example.readnewapp.ui;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.MenuItem;
 import android.view.Menu;
 
@@ -8,12 +11,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.readnewapp.R;
 import com.example.readnewapp.config.NewsDatabase;
+import com.example.readnewapp.config.NewsViewModel;
 import com.example.readnewapp.config.VolleySingleton;
 import com.example.readnewapp.model.News;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavController navController;
     private DrawerLayout drawerLayout;
     private NewsDatabase db;
+    private NewsViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +42,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = null;
+        viewModel = new ViewModelProvider(this).get(NewsViewModel.class);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navigationView = findViewById(R.id.nav_view);
+//        if (savedInstanceState == null) {
+//            viewModel.nav = navController.saveState();
+//        } else {
+//            navController.restoreState(viewModel.nav);
+//        }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -44,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setDrawerLayout(drawerLayout)
                 .build();
         db = new NewsDatabase(this);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        assert navigationView != null;
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -66,13 +80,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.save_news) {
+            startActivity(new Intent(MainActivity.this, SavedActivity.class));
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemID = item.getItemId();
-        switch (itemID){
+        switch (itemID) {
             case R.id.home:
                 navController.navigate(R.id.nav_home);
                 break;
@@ -87,4 +104,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        viewModel.nav = navController.saveState();
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        navController.restoreState(viewModel.nav);
+    }
 }

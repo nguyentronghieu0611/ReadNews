@@ -23,8 +23,9 @@ public class NewsDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(" CREATE TABLE " + "tblNews" + " (" +
                 "id" + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "title" + " TEXT NOT NULL, " +
+                "title" + " TEXT UNIQUE NOT NULL, " +
                 "detail" + " TEXT NOT NULL, " +
+                "image" + " TEXT NOT NULL, " +
                 "url" + " TEXT)");
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -41,6 +42,7 @@ public class NewsDatabase extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("title", news.getTITLE());
         values.put("detail", news.getDETAILS());
+        values.put("image", news.getIMG());
         values.put("url", news.getLINK());
         return sqLiteDatabase.insert("tblNews", null, values);
     }
@@ -50,11 +52,12 @@ public class NewsDatabase extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("title", news.getTITLE());
         values.put("detail", news.getDETAILS());
+        values.put("image", news.getIMG());
         values.put("url", news.getLINK());
         return sqLiteDatabase.update("tblNews",values,"id = ?",new String[]{news.getID().toString()});
     }
 
-    public int deleteContact(News news){
+    public int deleteNews(News news){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         return sqLiteDatabase.delete("tblNews", "id = ?", new String[]{news.getID().toString()});
     }
@@ -68,16 +71,21 @@ public class NewsDatabase extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         Cursor c = sqLiteDatabase.rawQuery("Select * from tblNews", null);
         List<News> result = new ArrayList<>();
-        News contact=null;
+        News news=null;
         if(c.moveToFirst()){
             do{
                 int id = c.getInt(0);
-                String phonenumber = c.getString(1);
-                String name = c.getString(2);
-                String email = c.getString(3);
-                byte[] image = c.getBlob(4);
-//                contact = new News(id,name,phonenumber,email,image);
-                result.add(contact);
+                String title = c.getString(1);
+                String detail = c.getString(2);
+                String image = c.getString(3);
+                String url = c.getString(4);
+                news = new News();
+                news.setID(id);
+                news.setTITLE(title);
+                news.setDETAILS(detail);
+                news.setIMG(image);
+                news.setLINK(url);
+                result.add(news);
             }while (c.moveToNext());
         }
         return result;

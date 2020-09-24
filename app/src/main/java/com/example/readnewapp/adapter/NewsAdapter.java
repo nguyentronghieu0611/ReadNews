@@ -22,11 +22,13 @@ public class NewsAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
     private NewsDatabase db;
+    private int type;
 
-    public NewsAdapter(List<News> listData, Context context, NewsDatabase db) {
+    public NewsAdapter(List<News> listData, Context context, NewsDatabase db, int type) {
         this.listData = listData;
         this.context = context;
         this.db = db;
+        this.type = type;
         layoutInflater = LayoutInflater.from(context);
     }
 
@@ -56,24 +58,43 @@ public class NewsAdapter extends BaseAdapter {
             holder.txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
             holder.txtDetail = (TextView) convertView.findViewById(R.id.txtDetail);
             holder.imgSave = (ImageView) convertView.findViewById(R.id.btnSave);
+            holder.imgDelete = (ImageView) convertView.findViewById(R.id.btnDelete);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         News news = this.listData.get(position);
-
+        if (type == 2) {
+            holder.imgDelete.setVisibility(View.VISIBLE);
+            holder.imgSave.setVisibility(View.GONE);
+        } else {
+            holder.imgDelete.setVisibility(View.GONE);
+            holder.imgSave.setVisibility(View.VISIBLE);
+        }
         holder.txtTitle.setText(news.getTITLE());
         holder.txtDetail.setText(news.getDETAILS());
-        if(news.getIMG() != null)
+        if (news.getIMG() != null)
             Glide.with(context).load(news.getIMG()).placeholder(R.mipmap.ic_launcher_round).into(holder.imageView);
         holder.imgSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 long i = db.insertContact(listData.get(position));
-                if(i>0)
-                    Toast.makeText(context,"Lưu thành công!",Toast.LENGTH_SHORT).show();
+                if (i > 0)
+                    Toast.makeText(context, "Lưu thành công!", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(context,"Lưu không thành công!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Đã tồn tại tin tức!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int a = db.deleteNews(listData.get(position));
+                if (a > 0) {
+                    listData.remove(position);
+                    notifyDataSetChanged();
+                    Toast.makeText(context,"Xóa thành công!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return convertView;
@@ -83,6 +104,6 @@ public class NewsAdapter extends BaseAdapter {
         ImageView imageView;
         TextView txtTitle;
         TextView txtDetail;
-        ImageView imgSave;
+        ImageView imgSave, imgDelete;
     }
 }

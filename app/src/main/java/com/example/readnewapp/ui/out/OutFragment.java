@@ -80,7 +80,7 @@ public class OutFragment extends Fragment {
             public void onResponse(String response) {
                 response = Utils.fixEncoding(response);
                 Log.e(TAG, "StringRequest onResponse: " + response);
-                lvNews.setAdapter(new NewsAdapter(listNews = Utils.parseXml(response),getContext(),db));
+                lvNews.setAdapter(new NewsAdapter(listNews = Utils.parseXml(response),getContext(),db,1));
             }
         }, new Response.ErrorListener() {
             @Override
